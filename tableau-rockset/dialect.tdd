@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- See notes below for definitions that require 2020.3 or newer -->
+<dialect name='rocksetDialect'
+         class='rockset'
+         base='PostgreSQL90Dialect'
+         version='18.1'>
+		 
+  <sql-format>
+    <format-string-literal value='Extended' />  <!-- Postgres specific -->
+    <format-true literal='TRUE' predicate='TRUE' /> <!-- Requires 2020.3 or newer -->
+    <!--
+      start-of-week-offset
+      Tableau's start of week functions assume Sunday is 0.
+      This is used to specify an offset. For example, if the
+      database says Sunday is 1, the offset value should be 1.
+      If Sunday is 6, the offset value should be either 6 or -1.
+    -->
+    <start-of-week-offset value='1' />
+   
+  </sql-format>
+</dialect>
