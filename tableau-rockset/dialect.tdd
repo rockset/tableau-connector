@@ -177,11 +177,11 @@
       <formula>COALESCE(%1, 0)</formula>
       <argument type='int' />
     </function>
-    <function group='string' name='ASCII' return-type='int'> <!--TODO-->
+    <function group='string' name='ASCII' return-type='int'> <!--Missing , TODO-->
       <formula>ASCII(CAST(%1 AS TEXT))</formula>
       <argument type='str' />
     </function>
-    <function group='string' name='CHAR' return-type='str'> <!--TODO-->
+    <function group='string' name='CHAR' return-type='str'> <!--Missing , TODO-->
       <formula><![CDATA[(CASE WHEN (%1 >= 0) AND (%1 < 256) THEN CHR(CAST(FLOOR(%1) AS INT)) ELSE NULL END)]]></formula>
       <argument type='real' />
     </function>
@@ -191,7 +191,7 @@
       <argument type='str' />
     </function>
     <function group='string' name='ENDSWITH' return-type='bool'>
-      <formula><![CDATA[(SUBSTR(RTRIM(CAST(%1 AS TEXT), ' '), (CASE WHEN (LENGTH(RTRIM(CAST(%1 AS TEXT), ' ')) - LENGTH(CAST(%2 AS TEXT))) < 0 THEN 1 ELSE LENGTH(RTRIM(CAST(%1 AS TEXT), ' ')) - LENGTH(CAST(%2 AS TEXT)) + 1 END), LENGTH(CAST(%2 AS TEXT))) = CAST(%2 AS TEXT))]]></formula>
+      <formula><![CDATA[(SUBSTR(RTRIM(CAST(%1 AS TEXT)), (CASE WHEN (LENGTH(RTRIM(CAST(%1 AS TEXT))) - LENGTH(CAST(%2 AS TEXT))) < 0 THEN 1 ELSE LENGTH(RTRIM(CAST(%1 AS TEXT))) - LENGTH(CAST(%2 AS TEXT)) + 1 END), LENGTH(CAST(%2 AS TEXT))) = CAST(%2 AS TEXT))]]></formula>
       <argument type='str' />
       <argument type='str' />
     </function>
@@ -223,7 +223,7 @@
       <argument type='str' />
     </function>
     <function group='string' name='LTRIM' return-type='str'>
-      <formula>LTRIM(CAST(%1 AS TEXT), &apos; &apos;)</formula>
+      <formula>LTRIM(CAST(%1 AS TEXT))</formula>
       <argument type='str' />
     </function>
     <function group='string' name='MAX' return-type='str'>
@@ -281,13 +281,13 @@
       <argument type='str' />
       <argument type='str' />
     </function>
-    <function group='string' name='RIGHT' return-type='str'>
+    <function group='string' name='RIGHT' return-type='str'> <!--TODO: TestCaseName string.right-->
       <formula>(CASE WHEN %2 &gt;= 0 THEN SUBSTR(CAST(%1 AS TEXT), (LENGTH(CAST(%1 AS TEXT)) - CAST(FLOOR(%2) AS INT)) ) ELSE NULL END)</formula>
       <argument type='str' />
       <argument type='real' />
     </function>
     <function group='string' name='RTRIM' return-type='str'>
-      <formula>RTRIM(CAST(%1 AS TEXT), &apos; &apos;)</formula>
+      <formula>RTRIM(CAST(%1 AS TEXT)</formula>
       <argument type='str' />
     </function>
     <function group='string' name='SPACE' return-type='str'>
@@ -295,7 +295,7 @@
       <argument type='real' />
     </function>
     <function group='string' name='STARTSWITH' return-type='bool'>
-      <formula>(SUBSTR(LTRIM(CAST(%1 AS TEXT), &apos; &apos;), 1, LENGTH(CAST(%2 AS TEXT))) = CAST(%2 AS TEXT))</formula>
+      <formula>(SUBSTR(LTRIM(CAST(%1 AS TEXT)), 1, LENGTH(CAST(%2 AS TEXT))) = CAST(%2 AS TEXT))</formula>
       <argument type='str' />
       <argument type='str' />
     </function>
@@ -357,8 +357,8 @@
     <function group='date' name='TODAY' return-type='date'>
       <formula>CURRENT_DATE</formula>
     </function>
-    <function group='date' name='WEEK' return-type='int'>
-      <formula>CAST(FLOOR((7 + EXTRACT(DOY FROM %1) - 1 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %1))) / 7) AS INT)</formula>
+    <function group='date' name='WEEK' return-type='int'> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
+      <formula>TRY_CAST(FLOOR((7 + EXTRACT(DOY FROM %1) - 2 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %1))) / 7) AS INT)</formula>
       <argument type='datetime' />
     </function>
     <function group='date' name='YEAR' return-type='int'>
@@ -374,7 +374,7 @@
       <argument type='str' />
     </function>
     <function group='cast' name='DATE' return-type='date'>
-      <formula>CAST(%1 AS DATE)</formula>
+      <formula>FORMAT_DATE('%Y-%m-%d', %1)</formula>
       <argument type='datetime' />
     </function>
     <function group='cast' name='DATETIME' return-type='datetime'>
@@ -397,15 +397,15 @@
       <argument type='bool' />
     </function>
     <function group='cast' name='FLOAT' return-type='real'>
-      <formula>CAST(%1 AS DOUBLE PRECISION)</formula>
+      <formula>CAST(%1 AS FLOAT)</formula>
       <argument type='real' />
     </function>
     <function group='cast' name='FLOAT' return-type='real'>
-      <formula>CAST(%1 AS DOUBLE PRECISION)</formula>
+      <formula>CAST(%1 AS FLOAT)</formula>
       <argument type='str' />
     </function>
     <function group='cast' name='FLOAT' return-type='real'>
-      <formula>((EXTRACT(EPOCH FROM %1) / ( 60 * 60 * 24)) + (365 * 70 + 17))</formula>
+      <formula>CAST(UNIX_SECONDS(TIMESTAMP(%1)) / ( 60 * 60 * 24) + (365 * 70 + 17) AS FLOAT)</formula>
       <argument type='datetime' />
     </function>
     <function group='cast' name='INT' return-type='int'>
@@ -420,11 +420,11 @@
       <argument type='real' />
     </function>
     <function group='cast' name='INT' return-type='int'>
-      <formula>CAST(TRUNC(CAST(%1 AS DOUBLE PRECISION)) AS INT)</formula>
+      <formula>CAST(TRUNC(CAST(%1 AS FLOAT)) AS INT)</formula>
       <argument type='str' />
     </function>
     <function group='cast' name='INT' return-type='int'>
-      <formula>FLOOR((EXTRACT(EPOCH FROM %1) / ( 60 * 60 * 24)) + (365 * 70 + 17))</formula>
+      <formula>FLOOR(( UNIX_SECONDS(TIMESTAMP(%1)) / ( 60 * 60 * 24)) + (365 * 70 + 17))</formula>
       <argument type='datetime' />
     </function>
     <function group='cast' name='STR' return-type='str'>
@@ -813,7 +813,7 @@
       <argument type='real' />
     </function>
     <function group='operator' name='-' return-type='real'>
-      <formula>(EXTRACT(EPOCH FROM (CAST(%1 AS TIMESTAMP) - %2)) / (60.0 * 60 * 24))</formula>
+      <formula>(UNIX_SECONDS(%1 - %2) / (60.0 * 60 * 24))</formula>
       <argument type='datetime' />
       <argument type='datetime' />
     </function>
@@ -837,7 +837,7 @@
       <argument type='int' />
     </function>
     <function group='operator' name='/' return-type='real'>
-      <formula>(CASE WHEN %2 = 0 THEN NULL ELSE CAST(%1 AS DOUBLE PRECISION) / %2 END)</formula>
+      <formula>(CASE WHEN %2 = 0 THEN NULL ELSE CAST(%1 AS FLOAT) / %2 END)</formula>
       <argument type='real' />
       <argument type='real' />
     </function>
@@ -932,27 +932,34 @@
       <argument type='bool' />
     </function>
     <date-function name='DATEADD' return-type='datetime'>
-      <formula>(%3 + %2 * INTERVAL &apos;1 %1&apos;)</formula>
-      <formula part='quarter'>(%3 + %2 * 3 * INTERVAL &apos;1 MONTH&apos;)</formula>
+      <formula>FORMAT_DATETIME('%Y-%m-%d %H:%M:%S',(%3 + %2 * INTERVAL &apos;1 %1&apos;))</formula>
+      <formula part='quarter'>(%3+ %2 * 3 * INTERVAL &apos;1 MONTH&apos;)</formula>
+      <argument type='localstr' />
+      <argument type='int' />
+      <argument type='date' />
+    </date-function>
+    <date-function name='DATEADD' return-type='datetime'>
+      <formula>FORMAT_DATETIME('%Y-%m-%d %H:%M:%S',(DATETIME(%3) + %2 * INTERVAL &apos;1 %1&apos;))</formula>
+      <formula part='quarter'>(DATETIME(%3) + %2 * 3 * INTERVAL &apos;1 MONTH&apos;)</formula>
       <argument type='localstr' />
       <argument type='int' />
       <argument type='datetime' />
     </date-function>
     <date-function name='DATEDIFF' return-type='int'>
-      <formula>CAST( FLOOR(EXTRACT(EPOCH FROM CAST(%3 AS TIMESTAMP)) / 86400) - FLOOR(EXTRACT(EPOCH FROM CAST(%2 AS TIMESTAMP)) / 86400) AS INT)</formula>
+      <formula>CAST( FLOOR(UNIX_SECONDS(%3) / 86400) - FLOOR(UNIX_SECONDS(%2) / 86400) AS INT)</formula>
       <formula part='year'>CAST( EXTRACT(YEAR FROM CAST(%3 AS TIMESTAMP)) - EXTRACT(YEAR FROM CAST(%2 AS TIMESTAMP)) AS INT)</formula>
       <formula part='quarter'>CAST( (4 * EXTRACT(YEAR FROM CAST(%3 AS TIMESTAMP)) + EXTRACT(QUARTER FROM CAST(%3 AS TIMESTAMP))) - (4 * EXTRACT(YEAR FROM CAST(%2 AS TIMESTAMP)) + EXTRACT(QUARTER FROM CAST(%2 AS TIMESTAMP))) AS INT)</formula>
       <formula part='month'>CAST( (12 * EXTRACT(YEAR FROM CAST(%3 AS TIMESTAMP)) + EXTRACT(MONTH FROM CAST(%3 AS TIMESTAMP))) - (12 * EXTRACT(YEAR FROM CAST(%2 AS TIMESTAMP)) + EXTRACT(MONTH FROM CAST(%2 AS TIMESTAMP))) AS INT)</formula>
-      <formula part='week'>CAST( FLOOR(( (FLOOR(EXTRACT(EPOCH FROM CAST(%3 AS TIMESTAMP)) / 86400) - EXTRACT(DOW FROM CAST(%3 AS TIMESTAMP)) ) - (FLOOR(EXTRACT(EPOCH FROM CAST(%2 AS TIMESTAMP)) / 86400)- EXTRACT(DOW FROM CAST(%2 AS TIMESTAMP)) ) ) / 7) AS INT)</formula>
-      <formula part='hour'>CAST( FLOOR(EXTRACT(EPOCH FROM CAST(%3 AS TIMESTAMP)) / 3600) - FLOOR(EXTRACT(EPOCH FROM CAST(%2 AS TIMESTAMP)) / 3600) AS INT)</formula>
-      <formula part='minute'>CAST( FLOOR(EXTRACT(EPOCH FROM CAST(%3 AS TIMESTAMP)) / 60) - FLOOR(EXTRACT(EPOCH FROM CAST(%2 AS TIMESTAMP)) / 60) AS INT)</formula>
-      <formula part='second'>CAST( EXTRACT(EPOCH FROM CAST(%3 AS TIMESTAMP)) - EXTRACT(EPOCH FROM CAST(%2 AS TIMESTAMP)) AS INT)</formula>
+      <formula part='week'>CAST( FLOOR(( (FLOOR(UNIX_SECONDS(%3)/ 86400) - EXTRACT(DOW FROM CAST(%3 AS TIMESTAMP)) - 1 ) - (FLOOR(UNIX_SECONDS(%2) / 86400)- EXTRACT(DOW FROM CAST(%2 AS TIMESTAMP)) -1 ) ) / 7) AS INT)</formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
+      <formula part='hour'>CAST( FLOOR(UNIX_SECONDS(%3) / 3600) - FLOOR(UNIX_SECONDS(%2)) / 3600) AS INT)</formula>
+      <formula part='minute'>CAST( (FLOOR(UNIX_SECONDS(%3) / 60) - FLOOR(UNIX_SECONDS(%2) / 60)) AS INT)</formula>
+      <formula part='second'>CAST( (UNIX_SECONDS(%3) - UNIX_SECONDS(%2)) AS INT)</formula>
       <argument type='localstr' />
       <argument type='datetime' />
       <argument type='datetime' />
     </date-function>
     <date-function name='DATEDIFF' return-type='int'>
-      <formula part='week'>CAST( FLOOR(( (FLOOR(EXTRACT(EPOCH FROM CAST(%3 AS TIMESTAMP)) / 86400) - ((7 + CAST(EXTRACT(DOW FROM %3) AS INT) - 1) % 7)) - (FLOOR(EXTRACT(EPOCH FROM CAST(CAST(%2 AS TIMESTAMP) AS TIMESTAMP)) / 86400) - ((7 + CAST(EXTRACT(DOW FROM CAST(%2 AS TIMESTAMP)) AS INT) - 1) % 7)) ) / 7) AS INT)</formula>
+      <formula part='week'>CAST( FLOOR(( (FLOOR(UNIX_SECONDS(%3) / 86400) - ((7 + CAST(EXTRACT(DOW FROM %3) AS INT) - 2) % 7)) - (FLOOR(UNIX_SECONDS(%2) / 86400) - ((7 + CAST(EXTRACT(DOW FROM CAST(%2 AS TIMESTAMP)) AS INT) - 1) % 7)) ) / 7) AS INT)</formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
       <argument type='localstr' />
       <argument type='datetime' />
       <argument type='datetime' />
@@ -963,36 +970,36 @@
       <formula part='day'>FORMAT_DATETIME(&apos;%d&apos;,%2)</formula>
       <formula part='dayofyear'>EXTRACT(DOY FROM %2)</formula>
       <formula part='month'>FORMAT_DATETIME(&apos;%B&apos;,%2)</formula>
-      <formula part='week'>CAST(FLOOR((7 + EXTRACT(DOY FROM %2) - 1 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %2))) / 7) AS TEXT)</formula>
+      <formula part='week'>TRY_CAST(FLOOR((7 + EXTRACT(DOY FROM %2) - 2 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %2))) / 7) AS TEXT)</formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
       <formula part='hour'>FORMAT_DATETIME(&apos;%d&apos;,%2)</formula>
       <formula part='minute'>FORMAT_DATETIME(&apos;%M&apos;,%2)</formula>
       <formula part='second'>FORMAT_DATETIME(&apos;%S&apos;,%2)</formula>
-      <formula part='weekday'>FORMAT_DATETIME(&apos;%W&apos;,%2)</formula>
+      <formula part='weekday'>FORMAT_DATETIME(&apos;%A&apos;,%2)</formula>
       <formula part='quarter'>EXTRACT(QUARTER FROM %2)</formula>
       <formula part='year'>FORMAT_DATETIME(&apos;%Y&apos;,%2)</formula>
       <argument type='localstr' />
       <argument type='datetime' />
     </date-function>
-    <date-function name='DATENAME' return-type='str'>
-      <formula part='week'>CAST(FLOOR((7 + EXTRACT(DOY FROM %2) - 1 + (CAST(7 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %2)) - %3 AS INT) % 7) ) / 7) AS TEXT)</formula>
+    <date-function name='DATENAME' return-type='str'> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
+      <formula part='week'>TRY_CAST(FLOOR((7 + EXTRACT(DOY FROM %2) - 2 + (CAST(7 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %2)) - %3 AS INT) % 7) ) / 7) AS TEXT)</formula>
       <argument type='localstr' />
       <argument type='datetime' />
       <argument type='localstr' />
     </date-function>
-    <date-function name='DATEPARSE' return-type='datetime'>
+    <!--<date-function name='DATEPARSE' return-type='datetime'>
       <formula>TO_TIMESTAMP(%2, %1)</formula>
       <argument type='localstr' />
       <argument type='str' />
-    </date-function>
+    </date-function>-->
     <date-function name='DATEPART' return-type='int'>
       <formula>CAST(TRUNC(EXTRACT(%1 FROM %2)) AS INT)</formula>
-      <formula part='weekday'>(1 + CAST(EXTRACT(DOW FROM %2) AS INT))</formula>
-      <formula part='week'>CAST(FLOOR((7 + EXTRACT(DOY FROM %2) - 1 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %2))) / 7) AS INT)</formula>
+      <formula part='weekday'>(CAST(EXTRACT(DOW FROM %2) AS INT))</formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
+      <formula part='week'>TRY_CAST(FLOOR((7 + EXTRACT(DOY FROM %2) - 2 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %2))) / 7) AS INT)</formula>
       <argument type='localstr' />
       <argument type='datetime' />
     </date-function>
-    <date-function name='DATEPART' return-type='int'>
-      <formula part='week'>CAST(FLOOR((7 + EXTRACT(DOY FROM %2) - 1 + (CAST(7 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %2)) - %3 AS INT) % 7)) / 7) AS INT)</formula>
+    <date-function name='DATEPART' return-type='int'> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
+      <formula part='week'>TRY_CAST(FLOOR((7 + EXTRACT(DOY FROM %2) - 2 + (CAST(7 + EXTRACT(DOW FROM DATE_TRUNC(&apos;YEAR&apos;, %2)) - %3 AS INT) % 7)) / 7) AS INT)</formula>
       <argument type='localstr' />
       <argument type='datetime' />
       <argument type='localstr' />
@@ -1000,17 +1007,17 @@
     <date-function name='DATETRUNC' return-type='datetime'>
       <formula>DATE_TRUNC( &apos;%1&apos;, CAST(%2 AS TIMESTAMP) )</formula>
       <formula part='quarter'>CAST(DATE_TRUNC(&apos;QUARTER&apos;, CAST(%2 AS DATE)) AS DATE)</formula>
-      <formula part='week'>CAST((DATE_TRUNC( &apos;DAY&apos;, CAST(%2 AS DATE) ) + (-EXTRACT(DOW FROM %2) * INTERVAL &apos;1 DAY&apos;)) AS DATE)</formula>
+      <formula part='week'>CAST((DATE_TRUNC( &apos;DAY&apos;, CAST(%2 AS DATE) ) + ((-EXTRACT(DOW FROM %2) - 1) * INTERVAL &apos;1 DAY&apos;)) AS DATE)</formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
       <argument type='localstr' />
       <argument type='datetime' />
     </date-function>
     <date-function name='DATETRUNC' return-type='datetime'>
-      <formula part='week'>(CAST(DATE_TRUNC( &apos;DAY&apos;, CAST(%2 AS TIMESTAMP)) AS DATE) - (((7 + CAST(EXTRACT(DOW FROM %2) AS INT) - %3) % 7) * INTERVAL &apos;1 DAY&apos;))</formula>
+      <formula part='week'>(CAST(DATE_TRUNC( &apos;DAY&apos;, CAST(%2 AS TIMESTAMP)) AS DATE) - (((7 + CAST((EXTRACT(DOW FROM %2) AS INT) - 1) - %3) % 7) * INTERVAL &apos;1 DAY&apos;))</formula><!--Rockset SOW is 1(Sunday) , not starts with 0 -->
       <argument type='localstr' />
       <argument type='datetime' />
       <argument type='localstr' />
     </date-function>
-    <native-split-function> <!--TODO:-->
+    <native-split-function> <!--Missing , TODO:-->
       <formula part='left'>SPLIT_PART(%1, %2, %3)</formula>
       <formula part='right'>REVERSE(SPLIT_PART(REVERSE(%1),REVERSE(%2),%3*-1))</formula>
     </native-split-function>
