@@ -281,13 +281,13 @@
       <argument type='str' />
       <argument type='str' />
     </function>
-    <function group='string' name='RIGHT' return-type='str'> <!--TODO: TestCaseName string.right-->
-      <formula>(CASE WHEN %2 &gt;= 0 THEN SUBSTR(CAST(%1 AS TEXT), (LENGTH(CAST(%1 AS TEXT)) - CAST(FLOOR(%2) AS INT)) ) ELSE NULL END)</formula>
+    <function group='string' name='RIGHT' return-type='str'>
+      <formula>(CASE WHEN %2 &gt;= 0 THEN SUBSTR(CAST(%1 AS TEXT), (LENGTH(CAST(%1 AS TEXT)) - CAST(FLOOR(%2) AS INT)) + 1 ) ELSE NULL END)</formula>
       <argument type='str' />
       <argument type='real' />
     </function>
     <function group='string' name='RTRIM' return-type='str'>
-      <formula>RTRIM(CAST(%1 AS TEXT)</formula>
+      <formula>RTRIM(CAST(%1 AS TEXT))</formula>
       <argument type='str' />
     </function>
     <function group='string' name='SPACE' return-type='str'>
@@ -373,8 +373,12 @@
       <formula>CAST(%1 AS DATE)</formula>
       <argument type='str' />
     </function>
-    <function group='cast' name='DATE' return-type='date'>
+    <function group='cast' name='DATE' return-type='str'>
       <formula>FORMAT_DATE('%Y-%m-%d', %1)</formula>
+      <argument type='datetime' />
+    </function>
+     <function group='cast' name='DATE' return-type='date'>
+      <formula>EXTRACT(DATE FROM %1)</formula>
       <argument type='datetime' />
     </function>
     <function group='cast' name='DATETIME' return-type='datetime'>
@@ -406,6 +410,10 @@
     </function>
     <function group='cast' name='FLOAT' return-type='real'>
       <formula>CAST(UNIX_SECONDS(TIMESTAMP(%1)) / ( 60 * 60 * 24) + (365 * 70 + 17) AS FLOAT)</formula>
+      <argument type='date' />
+    </function>
+    <function group='cast' name='FLOAT' return-type='real'>
+      <formula>CAST(UNIX_SECONDS(%1) / ( 60 * 60 * 24) + (365 * 70 + 17) AS FLOAT)</formula>
       <argument type='datetime' />
     </function>
     <function group='cast' name='INT' return-type='int'>
@@ -425,6 +433,10 @@
     </function>
     <function group='cast' name='INT' return-type='int'>
       <formula>FLOOR(( UNIX_SECONDS(TIMESTAMP(%1)) / ( 60 * 60 * 24)) + (365 * 70 + 17))</formula>
+      <argument type='date' />
+    </function>
+    <function group='cast' name='INT' return-type='int'>
+      <formula>FLOOR(( UNIX_SECONDS(%1) / ( 60 * 60 * 24)) + (365 * 70 + 17))</formula>
       <argument type='datetime' />
     </function>
     <function group='cast' name='STR' return-type='str'>
@@ -945,13 +957,19 @@
       <argument type='int' />
       <argument type='datetime' />
     </date-function>
+      <date-function name='DATEDIFF' return-type='int'>
+      <formula>CAST( FLOOR(UNIX_SECONDS(TIMESTAMP(%3)) / 86400) - FLOOR(UNIX_SECONDS(TIMESTAMP(%2)) / 86400) AS INT)</formula>
+      <argument type='localstr' />
+      <argument type='date' />
+      <argument type='date' />
+    </date-function>
     <date-function name='DATEDIFF' return-type='int'>
       <formula>CAST( FLOOR(UNIX_SECONDS(%3) / 86400) - FLOOR(UNIX_SECONDS(%2) / 86400) AS INT)</formula>
       <formula part='year'>CAST( EXTRACT(YEAR FROM CAST(%3 AS TIMESTAMP)) - EXTRACT(YEAR FROM CAST(%2 AS TIMESTAMP)) AS INT)</formula>
       <formula part='quarter'>CAST( (4 * EXTRACT(YEAR FROM CAST(%3 AS TIMESTAMP)) + EXTRACT(QUARTER FROM CAST(%3 AS TIMESTAMP))) - (4 * EXTRACT(YEAR FROM CAST(%2 AS TIMESTAMP)) + EXTRACT(QUARTER FROM CAST(%2 AS TIMESTAMP))) AS INT)</formula>
       <formula part='month'>CAST( (12 * EXTRACT(YEAR FROM CAST(%3 AS TIMESTAMP)) + EXTRACT(MONTH FROM CAST(%3 AS TIMESTAMP))) - (12 * EXTRACT(YEAR FROM CAST(%2 AS TIMESTAMP)) + EXTRACT(MONTH FROM CAST(%2 AS TIMESTAMP))) AS INT)</formula>
       <formula part='week'>CAST( FLOOR(( (FLOOR(UNIX_SECONDS(%3)/ 86400) - EXTRACT(DOW FROM CAST(%3 AS TIMESTAMP)) - 1 ) - (FLOOR(UNIX_SECONDS(%2) / 86400)- EXTRACT(DOW FROM CAST(%2 AS TIMESTAMP)) -1 ) ) / 7) AS INT)</formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
-      <formula part='hour'>CAST( FLOOR(UNIX_SECONDS(%3) / 3600) - FLOOR(UNIX_SECONDS(%2)) / 3600) AS INT)</formula>
+      <formula part='hour'>CAST( FLOOR(UNIX_SECONDS(%3) / 3600) - FLOOR(UNIX_SECONDS(%2)) / 3600 AS INT)</formula>
       <formula part='minute'>CAST( (FLOOR(UNIX_SECONDS(%3) / 60) - FLOOR(UNIX_SECONDS(%2) / 60)) AS INT)</formula>
       <formula part='second'>CAST( (UNIX_SECONDS(%3) - UNIX_SECONDS(%2)) AS INT)</formula>
       <argument type='localstr' />
