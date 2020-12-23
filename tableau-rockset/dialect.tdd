@@ -52,8 +52,8 @@
       <formula><![CDATA[(CASE WHEN %1 <> 0 THEN 1/TAN(%1) ELSE NULL END)]]></formula>
       <argument type='real' />
     </function>
-    <function group='numeric' name='DEGREES' return-type='real'> <!--Missing , TODO-->
-      <formula>DEGREES(%1)</formula>
+    <function group='numeric' name='DEGREES' return-type='real'> 
+      <formula>ROUND(((180/3.1415927) * %1),5)</formula>
       <argument type='real' />
     </function>
     <function group='numeric' name='DIV' return-type='int'>
@@ -132,16 +132,16 @@
       <argument type='real' />
       <argument type='real' />
     </function>
-    <function group='numeric' name='RADIANS' return-type='real'> <!--Missing , TODO-->
-      <formula>RADIANS(%1)</formula>
+    <function group='numeric' name='RADIANS' return-type='real'>
+      <formula>ROUND(((3.1415927/180) * %1),8)</formula>
       <argument type='real' />
     </function>
     <function group='numeric' name='ROUND' return-type='real'>
       <formula>ROUND(%1)</formula>
       <argument type='real' />
     </function>
-    <function group='numeric' name='ROUND' return-type='real'> <!--TODO:Number of decimal places after rounding. Now it is always 0-->
-      <formula>ROUND(%1)</formula>
+    <function group='numeric' name='ROUND' return-type='real'>
+      <formula>ROUND(%1,%2)</formula>
       <argument type='real' />
       <argument type='real' />
     </function>
@@ -282,7 +282,7 @@
       <argument type='str' />
     </function>
     <function group='string' name='RIGHT' return-type='str'>
-      <formula>(CASE WHEN %2 &gt;= 0 THEN SUBSTR(CAST(%1 AS TEXT), (LENGTH(CAST(%1 AS TEXT)) - CAST(FLOOR(%2) AS INT)) + 1 ) ELSE NULL END)</formula>
+      <formula>(CASE WHEN %2 &gt;= 0 THEN SUBSTR(CAST(%1 AS TEXT), (LENGTH(CAST(%1 AS TEXT)) - IF(CAST(ROUND(%2) AS INT) > LENGTH(CAST(%1 AS TEXT)), LENGTH(CAST(%1 AS TEXT)),CAST(ROUND(%2) AS INT))) + 1) ELSE NULL END)</formula>
       <argument type='str' />
       <argument type='real' />
     </function>
@@ -290,8 +290,8 @@
       <formula>RTRIM(CAST(%1 AS TEXT))</formula>
       <argument type='str' />
     </function>
-    <function group='string' name='SPACE' return-type='str'>
-      <formula>(CASE WHEN %1 &gt;= 0 THEN REPEAT(&apos; &apos;, CAST(FLOOR(%1) AS INT)) ELSE NULL END)</formula>
+    <function group='string' name='SPACE' return-type='str'> <!--Rockset REPEAT returns as Array, so join them to String as required.-->
+      <formula>(CASE WHEN %1 &gt;= 0 THEN ARRAY_JOIN(REPEAT(&apos; &apos;, CAST(FLOOR(%1) AS INT)),&apos;&apos;) ELSE NULL END)</formula>
       <argument type='real' />
     </function>
     <function group='string' name='STARTSWITH' return-type='bool'>
@@ -944,7 +944,7 @@
     </date-function>
     <date-function name='DATEDIFF' return-type='int'>
       <formula><![CDATA[(CASE WHEN TYPEOF(%3)='timestamp' AND TYPEOF(%2)='timestamp' THEN CAST( FLOOR(UNIX_SECONDS(%3) / 86400) - FLOOR(UNIX_SECONDS(%2) / 86400) AS INT) WHEN TYPEOF(%2)='timestamp' THEN CAST( FLOOR(UNIX_SECONDS(TIMESTAMP(%3)) / 86400) - FLOOR(UNIX_SECONDS(%2) / 86400) AS INT) WHEN TYPEOF(%3)='timestamp' THEN CAST( FLOOR(UNIX_SECONDS(%3) / 86400) - FLOOR(UNIX_SECONDS(TIMESTAMP(%2)) / 86400) AS INT) ELSE CAST( FLOOR(UNIX_SECONDS(TIMESTAMP(%3)) / 86400) - FLOOR(UNIX_SECONDS(TIMESTAMP(%2)) / 86400) AS INT) END)]]></formula>
-      <formula part='year'><![CDATA[(CASE WHEN TYPEOF(%3)='timestamp' AND TYPEOF(%2)='timestamp' THEN CAST( EXTRACT(YEAR FROM %3) - EXTRACT(YEAR FROM %2) AS INT) WHEN TYPEOF(%2)='timestamp' THEN CAST( EXTRACT(YEAR FROM %3) - EXTRACT(YEAR FROM TIMESTAMP(%2)) AS INT) WHEN TYPEOF(%3)='timestamp' THEN CAST( EXTRACT(YEAR FROM %3) - EXTRACT(YEAR FROM TIMESTAMP(%2)) AS INT) ELSE CAST( EXTRACT(YEAR FROM TIMESTAMP(%3)) - EXTRACT(YEAR FROM TIMESTAMP(%2)) AS INT) END)]]></formula>
+      <formula part='year'><![CDATA[(CASE WHEN TYPEOF(%3)='timestamp' AND TYPEOF(%2)='timestamp' THEN CAST( EXTRACT(YEAR FROM %3) - EXTRACT(YEAR FROM %2) AS INT) WHEN TYPEOF(%2)='timestamp' THEN CAST( EXTRACT(YEAR FROM TIMESTAMP(%3)) - EXTRACT(YEAR FROM %2) AS INT) WHEN TYPEOF(%3)='timestamp' THEN CAST( EXTRACT(YEAR FROM %3) - EXTRACT(YEAR FROM TIMESTAMP(%2)) AS INT) ELSE CAST( EXTRACT(YEAR FROM TIMESTAMP(%3)) - EXTRACT(YEAR FROM TIMESTAMP(%2)) AS INT) END)]]></formula>
       <formula part='quarter'><![CDATA[(CASE WHEN TYPEOF(%3)='timestamp' AND TYPEOF(%2)='timestamp' THEN CAST( (4 * EXTRACT(YEAR FROM %3) + EXTRACT(QUARTER FROM %3)) - (4 * EXTRACT(YEAR FROM %2) + EXTRACT(QUARTER FROM %2)) AS INT) WHEN TYPEOF(%2)='timestamp' THEN CAST( (4 * EXTRACT(YEAR FROM TIMESTAMP(%3)) + EXTRACT(QUARTER FROM TIMESTAMP(%3))) - (4 * EXTRACT(YEAR FROM %2) + EXTRACT(QUARTER FROM %2)) AS INT) WHEN TYPEOF(%3)='timestamp' THEN CAST( EXTRACT(YEAR FROM %3) - EXTRACT(YEAR FROM TIMESTAMP(%2)) AS INT) ELSE CAST( (4 * EXTRACT(YEAR FROM %3) + EXTRACT(QUARTER FROM TIMESTAMP(%3))) - (4 * EXTRACT(YEAR FROM TIMESTAMP(%2)) + EXTRACT(QUARTER FROM TIMESTAMP(%2))) AS INT) END)]]></formula>
       <formula part='month'><![CDATA[(CASE WHEN TYPEOF(%3)='timestamp' AND TYPEOF(%2)='timestamp' THEN CAST( (4 * EXTRACT(YEAR FROM %3) + EXTRACT(QUARTER FROM %3)) - (4 * EXTRACT(YEAR FROM %2) + EXTRACT(QUARTER FROM %2)) AS INT) WHEN TYPEOF(%2)='timestamp' THEN CAST( (4 * EXTRACT(YEAR FROM TIMESTAMP(%3)) + EXTRACT(QUARTER FROM TIMESTAMP(%3))) - (4 * EXTRACT(YEAR FROM %2) + EXTRACT(QUARTER FROM %2)) AS INT) WHEN TYPEOF(%3)='timestamp' THEN CAST( EXTRACT(YEAR FROM %3) - EXTRACT(YEAR FROM TIMESTAMP(%2)) AS INT) ELSE CAST( (12 * EXTRACT(YEAR FROM TIMESTAMP(%3)) + EXTRACT(MONTH FROM TIMESTAMP(%3))) - (12 * EXTRACT(YEAR FROM TIMESTAMP(%2)) + EXTRACT(MONTH FROM TIMESTAMP(%2))) AS INT) END)]]></formula>
       <formula part='week'><![CDATA[(CASE WHEN TYPEOF(%3)='timestamp' AND TYPEOF(%2)='timestamp' THEN CAST( FLOOR(( (FLOOR(UNIX_SECONDS(%3)/ 86400) - EXTRACT(DOW FROM %3) - 2 ) - (FLOOR(UNIX_SECONDS(%2) / 86400)- EXTRACT(DOW FROM %2) -2 ) ) / 7) AS INT) WHEN TYPEOF(%2)='timestamp' THEN CAST( FLOOR(( (FLOOR(UNIX_SECONDS(TIMESTAMP(%3))/ 86400) - EXTRACT(DOW FROM TIMESTAMP(%3)) - 2 ) - (FLOOR(UNIX_SECONDS(%2) / 86400)- EXTRACT(DOW FROM TIMESTAMP(%2)) -2 ) ) / 7) AS INT) WHEN TYPEOF(%3)='timestamp' THEN CAST( FLOOR(( (FLOOR(UNIX_SECONDS(%3)/ 86400) - EXTRACT(DOW FROM TIMESTAMP(%3)) - 2 ) - (FLOOR(UNIX_SECONDS(TIMESTAMP(%2)) / 86400)- EXTRACT(DOW FROM TIMESTAMP(%2)) -2 ) ) / 7) AS INT) ELSE CAST( FLOOR(( (FLOOR(UNIX_SECONDS(TIMESTAMP(%3))/ 86400) - EXTRACT(DOW FROM TIMESTAMP(%3)) - 2 ) - (FLOOR(UNIX_SECONDS(TIMESTAMP(%2)) / 86400)- EXTRACT(DOW FROM TIMESTAMP(%2)) -2 ) ) / 7) AS INT) END)]]></formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
