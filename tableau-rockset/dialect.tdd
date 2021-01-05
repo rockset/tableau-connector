@@ -53,7 +53,7 @@
       <argument type='real' />
     </function>
     <function group='numeric' name='DEGREES' return-type='real'> 
-      <formula>ROUND(((180/3.1415927) * %1),5)</formula>
+      <formula>ROUND(((180/3.1415926535) * %1),10)</formula>
       <argument type='real' />
     </function>
     <function group='numeric' name='DIV' return-type='int'>
@@ -70,12 +70,12 @@
       <argument type='real' />
     </function>
     <function group='numeric' name='HEXBINX' return-type='real'>
-      <formula><![CDATA[(((CASE WHEN (ABS((%2) - (CAST( ( (%2) / SQRT(3.0) ) AS FLOAT(18, 0) ) * SQRT(3.0)))) + SQRT(3.0) * ((ABS((%1) - (CAST( ( (%1) / 3.0 ) AS FLOAT(18, 0) ) * 3.0))) - 1.0) > 0.0 THEN 1.5 ELSE 0.0 END) - (CASE WHEN ((%1) - (CAST( ( (%1) / 3.0 ) AS FLOAT(18, 0) ) * 3.0) < 0.0) AND ((CASE WHEN (ABS((%2) - (CAST( ( (%2) / SQRT(3.0) ) AS FLOAT(18, 0) ) * SQRT(3.0)))) + SQRT(3.0) * ((ABS((%1) - (CAST( ( (%1) / 3.0 ) AS FLOAT(18, 0) ) * 3.0))) - 1.0) > 0.0 THEN 1.5 ELSE 0.0 END) > 0.0) THEN 3.0 ELSE 0.0 END)) + (CAST( ( (%1) / 3.0 ) AS FLOAT(18, 0) ) * 3.0))]]></formula>
+      <formula>(((CASE WHEN (ABS((%2) - (ROUND( ( (%2) / SQRT(3.0) ) ,0 ) * SQRT(3.0)))) + SQRT(3.0) * ((ABS((%1) - (ROUND( ( (%1) / 3.0 ) ,0 ) * 3.0))) - 1.0) &gt; 0.0 THEN 1.5 ELSE 0.0 END) - (CASE WHEN ((%1) - (ROUND( ( (%1) / 3.0 ) ,0 ) * 3.0) &lt; 0.0) AND ((CASE WHEN (ABS((%2) - (ROUND( ( (%2) / SQRT(3.0) ) ,0 ) * SQRT(3.0)))) + SQRT(3.0) * ((ABS((%1) - (ROUND( ( (%1) / 3.0 ) ,0 ) * 3.0))) - 1.0) &gt; 0.0 THEN 1.5 ELSE 0.0 END) &gt; 0.0) THEN 3.0 ELSE 0.0 END)) + (ROUND( ( (%1) / 3.0 ) ,0 ) * 3.0))</formula>
       <argument type='real' />
       <argument type='real' />
     </function>
     <function group='numeric' name='HEXBINY' return-type='real'>
-      <formula><![CDATA[CAST( (((CASE WHEN (ABS((%2) - (CAST( ( (%2) / SQRT(3.0) ) AS FLOAT(18, 0) ) * SQRT(3.0)))) + SQRT(3.0) * ((ABS((%1) - (CAST( ( (%1) / 3.0 ) AS FLOAT(18, 0) ) * 3.0))) - 1.0) > 0.0 THEN SQRT(3.0) / 2.0 ELSE 0.0 END) - (CASE WHEN ((%2) - (CAST( ( (%2) / SQRT(3.0) ) AS FLOAT(18, 0) ) * SQRT(3.0)) < 0.0) AND ((CASE WHEN (ABS((%2) - (CAST( ( (%2) / SQRT(3.0) ) AS FLOAT(18, 0) ) * SQRT(3.0)))) + SQRT(3.0) * ((ABS((%1) - (CAST( ( (%1) / 3.0 ) AS FLOAT(18, 0) ) * 3.0))) - 1.0) > 0.0 THEN SQRT(3.0) / 2.0 ELSE 0.0 END) > 0.0) THEN SQRT(3.0) ELSE 0.0 END)) + (CAST( ( (%2) / SQRT(3.0) ) AS FLOAT(18, 0) ) * SQRT(3.0))) AS FLOAT(18,3) )]]></formula>
+      <formula>ROUND( (((CASE WHEN (ABS((%2) - (ROUND( ( (%2) / SQRT(3.0) ), 0 ) * SQRT(3.0)))) + SQRT(3.0) * ((ABS((%1) - (ROUND( ( (%1) / 3.0 ), 0 ) * 3.0))) - 1.0) &gt; 0.0 THEN SQRT(3.0) / 2.0 ELSE 0.0 END) - (CASE WHEN ((%2) - (ROUND( ( (%2) / SQRT(3.0) ), 0 ) * SQRT(3.0)) &lt; 0.0) AND ((CASE WHEN (ABS((%2) - (ROUND( ( (%2) / SQRT(3.0) ), 0 ) * SQRT(3.0)))) + SQRT(3.0) * ((ABS((%1) - (ROUND( ( (%1) / 3.0 ), 0 ) * 3.0))) - 1.0) &gt; 0.0 THEN SQRT(3.0) / 2.0 ELSE 0.0 END) &gt; 0.0) THEN SQRT(3.0) ELSE 0.0 END)) + (ROUND( ( (%2) / SQRT(3.0) ), 0 ) * SQRT(3.0))), 3)</formula>
       <argument type='real' />
       <argument type='real' />
     </function>
@@ -125,7 +125,7 @@
       <argument type='int' />
     </function>
     <function group='numeric' name='PI' return-type='real'> 
-      <formula>3.1415927</formula>
+      <formula>3.1415926535</formula>
     </function>
     <function group='numeric' name='POWER' return-type='real'>
       <formula><![CDATA[(CASE WHEN %1 < 0 AND FLOOR(%2) <> %2 THEN NULL ELSE POWER(%1,%2) END)]]></formula>
@@ -133,7 +133,7 @@
       <argument type='real' />
     </function>
     <function group='numeric' name='RADIANS' return-type='real'>
-      <formula>ROUND(((3.1415927/180) * %1),8)</formula>
+      <formula>ROUND(((3.1415926535/180) * %1),10)</formula>
       <argument type='real' />
     </function>
     <function group='numeric' name='ROUND' return-type='real'>
@@ -447,7 +447,7 @@
       <argument type='str' />
     </function>
     <function group='cast' name='STR' return-type='str'>
-      <formula>CAST(%1 AS TEXT)</formula>
+      <formula><![CDATA[(CASE WHEN TYPEOF(%1)='timestamp' THEN REGEXP_REPLACE(CONCAT(FORMAT_DATETIME('%b %d %Y %I:%M',%1), CASE WHEN EXTRACT(HOUR FROM %1) >=12 then 'PM' ELSE 'AM' END),'\s[0]' ,' ') ELSE CAST(%1 AS TEXT) END)]]></formula>
       <argument type='datetime' />
     </function>
     <function group='logical' name='IFNULL' return-type='bool'>
