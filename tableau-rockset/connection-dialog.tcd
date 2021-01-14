@@ -4,9 +4,9 @@
     <authentication-options>
       <option name="UsernameAndPassword" default="true" />
     </authentication-options>
-    <db-name-prompt value="Database:" default="commons"/>
+    <db-name-prompt value="@string/database_prompt/" default="rockset"/>
     <has-databases value="true" />
     <has-schemas value="true" />
-    <server-prompt value="Server: " default="api.rs2.usw2.rockset.com"/>
+    <server-prompt value="@string/server_prompt/" default="api.rs2.usw2.rockset.com"/>
   </connection-config>
 </connection-dialog>
