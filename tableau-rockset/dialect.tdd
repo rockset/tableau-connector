@@ -177,15 +177,15 @@
       <formula>COALESCE(%1, 0)</formula>
       <argument type='int' />
     </function>
-    <function group='string' name='ASCII' return-type='int'> <!--Missing , TODO-->
+    <function group='string' name='ASCII' return-type='int'> 
       <formula>ASCII(CAST(%1 AS TEXT))</formula>
       <argument type='str' />
     </function>
-    <function group='string' name='CHAR' return-type='str'> <!--Missing , TODO-->
+    <function group='string' name='CHAR' return-type='str'> 
       <formula><![CDATA[(CASE WHEN (%1 >= 0) AND (%1 < 256) THEN CHR(CAST(FLOOR(%1) AS INT)) ELSE NULL END)]]></formula>
       <argument type='real' />
     </function>
-    <function group='string' name='CONTAINS' return-type='bool'> <!--TODO: Find why E' appear before quote, find  escape sequence issue!?-->
+    <function group='string' name='CONTAINS' return-type='bool'> <!--TODO: Find why E' appear before param 2?-->
       <formula>(STRPOS(CAST(%1 AS TEXT),CAST(%2 AS TEXT)) &gt; 0)</formula>
       <argument type='str' />
       <argument type='str' />
@@ -806,12 +806,12 @@
       <argument type='str' />
     </function>
     <function group='operator' name='+' return-type='datetime'>
-      <formula>(%1 + %2 * INTERVAL &apos;1 DAY&apos;)</formula>
+      <formula><![CDATA[(CASE WHEN TYPEOF(%1)='date' THEN (DATETIME(%1, TIME '00:00:00') + %2 * INTERVAL '1 DAY') ELSE (%1 + %2 * INTERVAL '1 DAY') END)]]></formula>
       <argument type='datetime' />
       <argument type='real' />
     </function>
     <function group='operator' name='+' return-type='date'>
-      <formula>(%1 + %2 * INTERVAL &apos;1 DAY&apos;)</formula>
+      <formula><![CDATA[(CASE WHEN TYPEOF(%1)='date' THEN (DATETIME(%1, TIME '00:00:00') + %2 * INTERVAL '1 DAY') ELSE (%1 + %2 * INTERVAL '1 DAY') END)]]></formula>
       <argument type='date' />
       <argument type='int' />
     </function>
@@ -839,12 +839,12 @@
       <argument type='int' />
     </function>
     <function group='operator' name='-' return-type='datetime'>
-      <formula>(%1 - %2 * INTERVAL &apos;1 DAY&apos;)</formula>
+      <formula><![CDATA[(CASE WHEN TYPEOF(%1)='date' THEN (DATETIME(%1, TIME '00:00:00') - %2 * INTERVAL '1 DAY') ELSE (%1 - %2 * INTERVAL '1 DAY') END)]]></formula>
       <argument type='datetime' />
       <argument type='real' />
     </function>
     <function group='operator' name='-' return-type='date'>
-      <formula>(%1 - %2 * INTERVAL &apos;1 DAY&apos;)</formula>
+      <formula><![CDATA[(CASE WHEN TYPEOF(%2)='date' THEN (DATETIME(%1, TIME '00:00:00') - %2 * INTERVAL '1 DAY') ELSE (%1 - %2 * INTERVAL '1 DAY') END)]]></formula>
       <argument type='date' />
       <argument type='int' />
     </function>
@@ -1013,17 +1013,17 @@
     <date-function name='DATETRUNC' return-type='datetime'>
       <formula><![CDATA[(CASE WHEN TYPEOF(%2)='timestamp' THEN DATE_TRUNC( '%1', %2) ELSE DATE_TRUNC( '%1', TIMESTAMP(%2)) END)]]></formula>
       <formula part='quarter'>CAST(DATE_TRUNC(&apos;QUARTER&apos;, CAST(%2 AS DATE)) AS DATE)</formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
-      <formula part='week'>CAST((DATE_TRUNC( &apos;DAY&apos;, CAST(%2 AS DATE) ) + ((-EXTRACT(DOW FROM %2) - 2) * INTERVAL &apos;1 DAY&apos;)) AS DATE)</formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
+      <formula part='week'>CAST((DATE_TRUNC( &apos;DAY&apos;, CAST(%2 AS DATE) ) + ((-EXTRACT(DOW FROM %2) +1) * INTERVAL &apos;1 DAY&apos;)) AS DATE)</formula> <!--Rockset SOW is 1(Sunday) , not starts with 0 -->
       <argument type='localstr' />
       <argument type='datetime' />
     </date-function>
     <date-function name='DATETRUNC' return-type='datetime'>
-      <formula part='week'><![CDATA[(CASE WHEN TYPEOF(%2)='timestamp' THEN (CAST(DATE_TRUNC( 'DAY', %2) AS DATE) - (((7 + CAST(EXTRACT(DOW FROM %2) AS INT) - 2 - %3) % 7) * INTERVAL '1 DAY')) ELSE (CAST(DATE_TRUNC( 'DAY', TIMESTAMP(%2)) AS DATE) - (((7 + CAST(EXTRACT(DOW FROM %2) AS INT) - 2 - %3) % 7) * INTERVAL '1 DAY')) END)]]></formula><!--Rockset SOW is 1(Sunday) , not starts with 0 -->
+      <formula part='week'><![CDATA[(CASE WHEN TYPEOF(%2)='timestamp' THEN (CAST(DATE_TRUNC( 'DAY', %2) AS DATE) - (((7 + CAST(EXTRACT(DOW FROM %2) AS INT) - %3) % 7) * INTERVAL '1 DAY')) ELSE (CAST(DATE_TRUNC( 'DAY', TIMESTAMP(%2)) AS DATE) - (((7 + CAST(EXTRACT(DOW FROM %2) AS INT) - %3) % 7) * INTERVAL '1 DAY')) END)]]></formula><!--Rockset SOW is 1(Sunday) , not starts with 0 -->
       <argument type='localstr' />
       <argument type='datetime' />
       <argument type='localstr' />
     </date-function>
-    <native-split-function> <!--Missing , TODO:-->
+    <native-split-function> 
       <formula part='left'>SPLIT_PART(%1, %2, %3)</formula>
       <formula part='right'>REVERSE(SPLIT_PART(REVERSE(%1),REVERSE(%2),%3*-1))</formula>
     </native-split-function>
