@@ -395,8 +395,15 @@
     </function>
     <function group='cast' name='FLOAT' return-type='real'>
       <formula>(CASE
-	WHEN %1 THEN 1.0
-	WHEN NOT %1 THEN 0.0
+	WHEN CAST(%1 AS BOOL) THEN 1.0
+	WHEN NOT CAST(%1 AS BOOL) THEN 0.0
+	ELSE NULL END)</formula>
+      <argument type='bool' />
+    </function>
+	 <function group='join' name='FLOAT' return-type='real'>
+      <formula>(CASE
+	WHEN CAST(%1 AS BOOL) THEN 1.0
+	WHEN NOT CAST(%1 AS BOOL) THEN 0.0
 	ELSE NULL END)</formula>
       <argument type='bool' />
     </function>
@@ -412,10 +419,17 @@
       <formula><![CDATA[(CASE WHEN TYPEOF(%1)='timestamp' THEN CAST(UNIX_SECONDS(%1) / ( 60 * 60 * 24) + (365 * 70 + 17) AS FLOAT) ELSE CAST(UNIX_SECONDS(TIMESTAMP(%1)) / ( 60 * 60 * 24) + (365 * 70 + 17) AS FLOAT) END)]]></formula>
       <argument type='datetime' />
     </function>
+	<function group='join' name='INT' return-type='int'>
+      <formula>(CASE
+	WHEN CAST(%1 AS BOOL) THEN 1
+	WHEN NOT CAST(%1 AS BOOL) THEN 0
+	ELSE NULL END)</formula>
+      <argument type='bool' />
+    </function>
     <function group='cast' name='INT' return-type='int'>
       <formula>(CASE
-	WHEN %1 THEN 1
-	WHEN NOT %1 THEN 0
+	WHEN CAST(%1 AS BOOL) THEN 1
+	WHEN NOT CAST(%1 AS BOOL) THEN 0
 	ELSE NULL END)</formula>
       <argument type='bool' />
     </function>
@@ -433,8 +447,8 @@
     </function>
     <function group='cast' name='STR' return-type='str'>
       <formula>(CASE
-	WHEN %1 THEN &apos;1&apos;
-	WHEN NOT %1 THEN &apos;0&apos;
+	WHEN CAST(%1 AS BOOL) THEN &apos;1&apos;
+	WHEN NOT CAST(%1 AS BOOL) THEN &apos;0&apos;
 	ELSE NULL END)</formula>
       <argument type='bool' />
     </function>
@@ -487,65 +501,65 @@
       <argument type='bool' />
     </function>
     <function group='logical' name='IIF' return-type='real'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE NULL END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE NULL END)</formula>
       <argument type='bool' />
       <argument type='real' />
       <argument type='real' />
     </function>
     <function group='logical' name='IIF' return-type='real'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE %4 END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE %4 END)</formula>
       <argument type='bool' />
       <argument type='real' />
       <argument type='real' />
       <argument type='real' />
     </function>
     <function group='logical' name='IIF' return-type='int'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE NULL END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE NULL END)</formula>
       <argument type='bool' />
       <argument type='int' />
       <argument type='int' />
     </function>
     <function group='logical' name='IIF' return-type='int'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE %4 END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE %4 END)</formula>
       <argument type='bool' />
       <argument type='int' />
       <argument type='int' />
       <argument type='int' />
     </function>
     <function group='logical' name='IIF' return-type='str'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE NULL END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE NULL END)</formula>
       <argument type='bool' />
       <argument type='str' />
       <argument type='str' />
     </function>
     <function group='logical' name='IIF' return-type='str'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE %4 END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE %4 END)</formula>
       <argument type='bool' />
       <argument type='str' />
       <argument type='str' />
       <argument type='str' />
     </function>
     <function group='logical' name='IIF' return-type='datetime'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE NULL END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE NULL END)</formula>
       <argument type='bool' />
       <argument type='datetime' />
       <argument type='datetime' />
     </function>
     <function group='logical' name='IIF' return-type='datetime'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE %4 END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE %4 END)</formula>
       <argument type='bool' />
       <argument type='datetime' />
       <argument type='datetime' />
       <argument type='datetime' />
     </function>
     <function group='logical' name='IIF' return-type='date'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE NULL END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE NULL END)</formula>
       <argument type='bool' />
       <argument type='date' />
       <argument type='date' />
     </function>
     <function group='logical' name='IIF' return-type='date'>
-      <formula>(CASE WHEN %1 THEN %2 WHEN NOT %1 THEN %3 ELSE %4 END)</formula>
+      <formula>(CASE WHEN CAST(%1 AS BOOL) THEN %2 WHEN NOT CAST(%1 AS BOOL) THEN %3 ELSE %4 END)</formula>
       <argument type='bool' />
       <argument type='date' />
       <argument type='date' />
@@ -585,6 +599,14 @@
       <argument type='int' />
     </function>
     <function group='logical' name='NOT' return-type='bool'>
+      <formula>NOT CAST(%1 AS bool)</formula>
+      <argument type='real' />
+    </function>
+    <function group='join' name='NOT' return-type='bool'>
+      <formula>NOT CAST(%1 AS bool)</formula>
+      <argument type='int' />
+    </function>
+    <function group='join' name='NOT' return-type='bool'>
       <formula>NOT CAST(%1 AS bool)</formula>
       <argument type='real' />
     </function>
