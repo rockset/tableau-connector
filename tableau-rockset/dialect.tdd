@@ -1115,13 +1115,13 @@
     <format-select>
       <part name='Select' value='SELECT %1' />
       <part name='From' value='FROM %1' />
-      <part name='Where' value='WHERE %1' />
+      <part name='Where' value='WHERE CASE WHEN TYPEOF(%1)=&apos;datetime&apos; THEN TIMESTAMP(%1) WHEN TYPEOF(%1)=&apos;timestamp&apos; THEN TIMESTAMP(%1) WHEN TYPEOF(%1)=&apos;date&apos; THEN DATE(%1) ELSE %1 END' />
       <part name='Group' value='GROUP BY %1' />
       <part name='Having' value='HAVING %1' />
       <part name='OrderBy' value='ORDER BY %1' />
       <part name='Top' value='LIMIT %1' />
     </format-select>
-    <format-string-literal value='Extended' />  <!-- Postgres specific -->
+    <format-string-literal value='Standard' />
     <format-true literal='TRUE' predicate='TRUE' /> <!-- Requires 2020.3 or newer -->
     <!--
       start-of-week-offset
