@@ -7,7 +7,7 @@ The connector is built with the Tableau Connector SDK. The connector provides a 
 
 ## Building
 
-To build a new version of the connector, use [earthly](https://eartly.dev)
+To build a new version of the connector, use [earthly](https://earthly.dev)
 
 ```
 earthly +build
